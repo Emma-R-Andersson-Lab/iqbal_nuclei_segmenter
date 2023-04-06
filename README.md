@@ -1,0 +1,3 @@
+# Iqbal Nuclei Segmenter
+
+This repositories contains the scripts and notebooks used to analyze the data for the Iqbal et al. paper. cellprofiler_scripts folder contains scripts used to segment Calcein-AM and Propidium-Iodide organoids in the death area percentage analysis for Figure 2. nuclei_segmenter contains the python scripts used to segment nuclei from organoids analyzed in Figure 5. The python scripts in the root folder are used to called nuclear_segmenter scripts and analyze all the images, while the notebooks where made to visualize the results. There is also a yaml file listing the packages in the environment used to run the scripts and notebooks.
