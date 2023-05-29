@@ -16,9 +16,14 @@ def get_pixel_size(file):
 
 def get_image(file):
     img = np.squeeze(file.asarray())
-    if img.ndim > 3:
+    if img.ndim > 3 or file.shape[file.axes.find('Z')] == 1:
         img = img[0]
     return img
+
+
+def get_edu_image(file):
+    img = np.squeeze(file.asarray())
+    return img[1]
 
 
 def get_labeled(label_filepath):

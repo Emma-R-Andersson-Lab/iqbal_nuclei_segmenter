@@ -12,8 +12,9 @@ from nuclei_segmenter.vis import save_img
 # SEGM_DIR = pathlib.Path(r'P:\c5_Andersson_Emma\Afshan\Nuclei Area quantication\segmented_nuclei\segmented')
 
 
-DATA_DIR = pathlib.Path(r'C:\Users\agucor\Karolinska Institutet\Afshan Iqbal - EdU staining Non-IGF1 exp')
-SEGM_DIR = pathlib.Path(r'C:\Users\agucor\Karolinska Institutet\Afshan Iqbal - EdU staining Non-IGF1 exp\segmented')
+DIR = pathlib.Path(r'C:\Users\agucor\Karolinska Institutet\Afshan Iqbal - EdU staining IGF1 Exp')
+DATA_DIR = DIR / 'data'
+SEGM_DIR = DIR / 'segmented'
 file_list = [filepath for filepath in DATA_DIR.rglob("*.czi") if 'Orthogonal' not in filepath.name]
 # file_list = [DATA_DIR / 'Wt1223/WT1223 Peripheral-2.czi',
 #              DATA_DIR / 'Wt1223/WT1223 Peripheral-8.czi']
@@ -34,7 +35,7 @@ def run_and_save(filepath):
 
     labels = segment_nuclei(image, scale)
     print('Saving at ' + str(segment_path))
-    save_img(segment_path, labels)
+    save_img(segment_path, labels, create_dir=True)
 
     print('Quantifying ' + filepath.name)
     nuclei_props = quantify(image, labels, scale)

@@ -23,10 +23,26 @@ def get_3d_props(img, labeled):
                                                          properties=('area', 'intensity_mean', 'label')))
 
 
-def get_all_props(img, labeled):
+def get_3d_extra_int(img, labeled):
+    return pd.DataFrame.from_dict(meas.regionprops_table(labeled,
+                                                         intensity_image=img,
+                                                         properties=('intensity_mean', 'label'),
+                                                         extra_properties=[intensity_median]))
+
+
+def intensity_median(regionmask, intensity_image):
+    return np.median(intensity_image[regionmask])
+
+
+def get_all_props(img, labeled, extra_image=None):
     nuclei_props_2d = get_2d_props(img, labeled)
     nuclei_props_3d = get_3d_props(img, labeled)
-    nuclei_props_all = pd.merge(nuclei_props_2d, nuclei_props_3d, on='label', suffixes=('_2D', '_3D'))
+    if extra_image is not None:
+        nuclei_extra_int = get_3d_extra_int(extra_image, labeled)
+        nuclei_props_3d = pd.merge(nuclei_props_3d, nuclei_extra_int,
+                                   on='label', suffixes=('', '_edu'))
+    nuclei_props_all = pd.merge(nuclei_props_2d, nuclei_props_3d,
+                                on='label', suffixes=('_2D', '_3D'))
 
     return nuclei_props_all
 
@@ -114,8 +130,8 @@ def quantify_path(img_filepath, labeled_filepath):
     return quantify(img, labeled, scale)
 
 
-def quantify(img, labeled, scale):
-    nuclei_props = get_all_props(img, labeled)
+def quantify(img, labeled, scale, extra_image=None):
+    nuclei_props = get_all_props(img, labeled, extra_image=extra_image)
     nuclei_props = calculate_area(nuclei_props, scale)
     nuclei_props = calculate_volume(nuclei_props, scale)
 
