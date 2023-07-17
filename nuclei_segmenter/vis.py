@@ -128,6 +128,8 @@ def load_full_df(excel_path):
     df = pd.read_excel(excel_path, sheet_name=None)
     dfs = []
     for sample, this_df in df.items():
+        if len(this_df) == 0:
+            continue
         this_df['sample_name'] = sample
         this_df['condition'] = 'Ndr' if sample[:2] == 'Nd' else 'WT'
         this_df['region'] = 'Hilar' if 'hilar' in sample.lower() else 'Periphery'
@@ -140,7 +142,8 @@ def plot_hist_per_sample(df, max_bin=800, bin_width=25):
     g = sns.FacetGrid(df, hue="condition", col="sample_name",
                       col_wrap=np.floor(np.sqrt(len(df.sample_name.unique()))).astype(int),
                       sharex=True, palette=condition_palette)
-    g.map(sns.histplot, "area", alpha=.4, binrange=(0, max_bin), binwidth=bin_width, stat='count', edgecolor='k', kde=True, log=True,
+    g.map(sns.histplot, "area", alpha=.4, binrange=(0, max_bin),
+          binwidth=bin_width, stat='count', edgecolor='k', kde=True, log=True,
           rasterized=True)
     g.set(ylim=(0.9, 5000), xlim=(-10, max_bin))
     g.map(plt.grid, color='grey', alpha=0.6, axis='y')
@@ -176,8 +179,11 @@ def plot_classification(df, lines):
     axs = sns.histplot(df, hue='predicted', x='area', log_scale=True, palette=size_palette,
                        hue_order=hue_order)
     for line_name, line in lines:
-        axs.axvline(x=line, color='k', linestyle='--', alpha=0.9)
-        axs.text(line, 400, str(line), fontsize=10)
+        try:
+            axs.axvline(x=line, color='k', linestyle='--', alpha=0.9)
+            axs.text(line, 400, str(line), fontsize=10)
+        except ValueError:
+            pass
     return axs
 
 
