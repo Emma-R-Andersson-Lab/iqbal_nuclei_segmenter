@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from skimage import measure as meas, morphology as morph
+from skimage import measure as meas, morphology as morph, filters
 from sklearn.mixture import GaussianMixture
 
 from .loader import get_image, get_file, get_pixel_size, get_labeled
@@ -119,6 +119,20 @@ def classify(model, vals):
     cs = model.predict(vals.reshape(-1, 1))
     class_dict = get_class_dict(model)
     return np.asarray([class_dict[c] for c in cs])
+
+
+def find_edu_nuclei(vals):
+    threshold = filters.threshold_triangle(vals)
+    return vals > threshold
+
+
+def find_edu_nuclei_in_df(df, 
+                          image_col='sample_name', 
+                          intensity_col='intensity_median'):
+    df['edu'] = df.groupby(image_col, 
+                           group_keys=False)[intensity_col].apply(
+        find_edu_nuclei)
+    return df
 
 
 def quantify_path(img_filepath, labeled_filepath):
