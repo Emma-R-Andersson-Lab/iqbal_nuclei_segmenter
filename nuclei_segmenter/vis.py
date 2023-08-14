@@ -11,6 +11,15 @@ import tifffile as tif
 condition_palette = {'Ndr': 'orange', 'WT': 'b'}
 size_palette = {'small': '#6495ED', 'medium': '#FCE883', 'big': '#FF6347'}
 
+labeled_colormap = mpl.cm.get_cmap('tab20', 256)
+labeled_colormap.set_under(alpha=0)
+
+my_positive_colormap = mpl.cm.get_cmap('Accent', 1)
+my_positive_colormap.set_under(alpha=0)
+
+my_negative_colormap = mpl.cm.get_cmap('Set1', 1)
+my_negative_colormap.set_under(alpha=0)
+
 
 def save_img(save_path, stack, axes='YX', create_dir=False):
     """Saves stack as 16-bit integer in tif format."""
