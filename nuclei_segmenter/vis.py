@@ -3,6 +3,7 @@ import matplotlib as mpl
 import napari
 import numpy as np
 import pandas as pd
+from scipy import ndimage as ndi
 import seaborn as sns
 import tifffile as tif
 
@@ -65,6 +66,22 @@ def view_property_2d(img, property_labeled):
     viewer = napari.view_image(img)
     viewer.add_image(property_labeled)
     napari.run()
+
+
+def get_contours(labels):
+    struct_elem = ndi.generate_binary_structure(labels.ndim, 1)
+    thick_struct_elem = ndi.iterate_structure(struct_elem, 2).astype(
+        bool
+    )
+
+    dilated_labels = ndi.grey_dilation(labels, footprint=struct_elem)
+    eroded_labels = ndi.grey_erosion(labels, footprint=thick_struct_elem)
+    not_boundaries = dilated_labels == eroded_labels
+
+    contours = labels.copy()
+    contours[not_boundaries] = 0
+
+    return contours
 
 
 def plot_area_labeled(area_labeled, z, area_labeled_limits=(1, 400), axs=None):
