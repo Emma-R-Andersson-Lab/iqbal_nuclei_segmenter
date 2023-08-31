@@ -122,7 +122,7 @@ def classify(model, vals):
 
 
 def find_edu_nuclei(vals):
-    threshold = filters.threshold_triangle(vals)
+    threshold = filters.threshold_otsu(vals)
     return vals > threshold
 
 
