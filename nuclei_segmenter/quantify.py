@@ -121,8 +121,9 @@ def classify(model, vals):
     return np.asarray([class_dict[c] for c in cs])
 
 
-def find_edu_nuclei(vals):
+def find_edu_nuclei(vals, min_int=390):
     threshold = filters.threshold_otsu(vals)
+    threshold = max(390, threshold)
     return vals > threshold
 
 
